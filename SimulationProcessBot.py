@@ -41,6 +41,17 @@ elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openai':
         max_tokens=1024,
         request_timeout=60
     )
+elif OPENAI_CONFIG['OPENAI_API_TYPE'] == 'openrouter':
+    os.environ["OPENAI_API_KEY"] = OPENAI_CONFIG['OPENROUTER_API_KEY']
+    os.environ["OPENAI_API_BASE"] = OPENAI_CONFIG['OPENROUTER_API_BASE']
+    llm = ChatOpenAI(
+        temperature=0,
+        model_name=OPENAI_CONFIG['OPENROUTER_MODEL'],
+        max_tokens=1024,
+        request_timeout=60,
+        openai_api_base=OPENAI_CONFIG['OPENROUTER_API_BASE'],
+        openai_api_key=OPENAI_CONFIG['OPENROUTER_API_KEY']
+    )
 
 # ------------------------------------------------------------------------------
 # --ZH 初始化工具
