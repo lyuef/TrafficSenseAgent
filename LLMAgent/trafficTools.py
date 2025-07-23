@@ -55,18 +55,47 @@ class simulationControl:
         else:
             sumoBinary = checkBinary('sumo-gui')
 
-        traci.start([sumoBinary, "-c", self.sumocfgfile])
+        try:
+            traci.start([sumoBinary, "-c", self.sumocfgfile])
+        except traci.exceptions.TraCIException as e:
+            if "already active" in str(e):
+                traci.close()
+                traci.start([sumoBinary, "-c", self.sumocfgfile])
+            else:
+                raise e
         print('start reading state')
         if ordinal_number > 0:
             traci.simulation.loadState(self.tempstatefile)
         else:
             traci.simulation.loadState(self.originalstatefile)
 
-        start_time = int(traci.simulation.getTime() / 1000)
+        # start_time = int(traci.simulation.getTime() / 1000)
+        start_time = int(traci.simulation.getTime())
         print('read state done!')
-        for step in range(start_time, start_time + STEP):
-            traci.simulationStep()
+        step = start_time
+        end_time = start_time + STEP
 
+        while step < end_time:
+            try:
+                # 检查连接是否还有效
+                if not traci.isLoaded():
+                    print("TraCI connection is not loaded")
+                    break
+            
+                # 检查是否还有仿真对象（车辆、行人等）
+                if traci.simulation.getMinExpectedNumber() <= 0:
+                    print(f"No more simulation objects at step {step}")
+                    break
+            
+                traci.simulationStep()
+                step += 1
+            except traci.exceptions.FatalTraCIError as e:
+                print(f"SUMO connection error at step {step}: {e}")
+                break
+            except Exception as e:
+                print(f"Unexpected error at step {step}: {e}")
+            break
+        print('simulation done!')
         traci.simulation.saveState(self.tempstatefile)
 
         traci.close()
