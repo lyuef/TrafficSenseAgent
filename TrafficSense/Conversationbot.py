@@ -1,19 +1,16 @@
 from rich import print
 from typing import Any, List
 from langchain.agents import Tool, create_react_agent, AgentExecutor
-from langchain.chat_models import AzureChatOpenAI
+from langchain_openai import AzureChatOpenAI,ChatOpenAI
 from langchain.prompts import PromptTemplate
-from TrafficSense.callbackHandler import CustomHandler
-from langchain.callbacks import get_openai_callback
 from langchain.memory import ConversationBufferMemory
-
+from typing import Union
 
 class ConversationBot:
     def __init__(
-            self, llm: AzureChatOpenAI, toolModels: List,
+            self, llm: Union[ChatOpenAI,AzureChatOpenAI], toolModels: List,
             customedPrefix: str, verbose: bool = False
     ) -> Any:
-        self.ch = CustomHandler()
         tools = []
 
         for ins in toolModels:
@@ -81,11 +78,8 @@ Thought:{agent_scratchpad}"""
         )
     def dialogue(self, input: str):
         print('TransGPT is running with ReAct reasoning, Please wait for a moment...')
-        with get_openai_callback() as cb:
-            res = self.agent_chain.invoke(
-                {"input":input},
-                config = {"callbacks":[self.ch]}
+        res = self.agent_chain.invoke(
+                {"input":input}
             )
-        output = res.get("output",res)
         # print('History: ', self.agent_memory.buffer)
-        return output, cb
+        return res["output"]
