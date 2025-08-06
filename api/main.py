@@ -4,8 +4,8 @@ from api.routes import router
 
 # Create FastAPI application
 app = FastAPI(
-    title="Traffic Analysis Agent API",
-    description="HTTP API for Traffic Analysis Agent with streaming support",
+    title="TrafficSenseAgent API",
+    description="HTTP API for TrafficSenseAgent with streaming support",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -27,7 +27,7 @@ app.include_router(router, prefix="/api")
 async def root():
     """Root endpoint with API information"""
     return {
-        "message": "Traffic Analysis Agent API",
+        "message": "TrafficSenseAgent API",
         "version": "1.0.0",
         "docs": "/docs",
         "redoc": "/redoc",
