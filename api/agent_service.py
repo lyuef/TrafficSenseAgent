@@ -9,8 +9,6 @@ from TrafficSense.TrafficTools import (
     demo_longhua_solution
 )
 from TrafficSense.Conversationbot import ConversationBot
-from api.streaming_handler import StreamingCallbackHandler
-from api.verbose_stream_handler import run_agent_with_streaming
 
 class AgentService:
     """Service class to manage the Traffic Analysis Agent"""
